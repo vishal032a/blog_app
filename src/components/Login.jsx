@@ -1,5 +1,6 @@
 import { Box, Button, styled, TextField, Typography } from "@mui/material";
 import {useState} from "react";
+import { supabase } from "../utils/supabaseClient";
 const Component = styled(Box)`
     width:400px;
     margin:auto;
@@ -51,12 +52,12 @@ const Text = styled(Typography)`
     font-size:14px;
 `;
 const loginInitialValues = {
-    username:'',
+    email:'',
     password:''
 }
 const signupInitialValues = {
     name:'',
-    username:'',
+    email:'',
     password:''
 }
 
@@ -79,8 +80,15 @@ const Login = ()=>{
     const [logindata,setLogindata] = useState(loginInitialValues);
     
 
-    const signupUser = async()=>{
-
+    const signupUser = async()=>{ 
+        const { data, error } = await supabase
+        .from('users')
+        .insert([
+        { email: signup.email, name: signup.name },
+        ])
+        .select()
+        if(data) console.log(data);
+        else console.log(error);
     }
 
     const onValuechange = (e)=>{
@@ -88,6 +96,7 @@ const Login = ()=>{
     }
 
     const loginuser = async()=>{
+
     }
     return(
         <Component>
@@ -96,7 +105,7 @@ const Login = ()=>{
                 {
                     account === 'login'?
                     <Wrapper>
-                    <TextField variant="standard" value={logindata.username} name="username" onChange={(e)=>onValuechange(e)} label="Enter username"/>
+                    <TextField variant="standard" value={logindata.email} name="email" onChange={(e)=>onValuechange(e)} label="Enter Email"/>
                     <TextField variant="standard" value={logindata.password} name="password" onChange={(e)=>onValuechange(e)} label="Enter password" />
 
                     {error && <Error>{error}</Error>}
@@ -108,7 +117,7 @@ const Login = ()=>{
                 :
                 <Wrapper>
                     <TextField variant="standard" value={signup.name} label="Enter name" name="name" onChange={(e)=>{onInputChange(e)}}/>
-                    <TextField variant="standard" value={signup.username} label="Enter username" name="username" onChange={(e)=>{onInputChange(e)}}/>
+                    <TextField variant="standard" value={signup.email} label="Enter Email" name="email" onChange={(e)=>{onInputChange(e)}}/>
                     <TextField variant="standard" value={signup.password} label="Enter password" name="password" onChange={(e)=>{onInputChange(e)}}/>
 
                     {error && <Error>{error}</Error>}
